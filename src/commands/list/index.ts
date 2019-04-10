@@ -17,7 +17,7 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Options')}
       --list, -l  Which list to show the task from
-      --showHidden, h Show completed and hidden tasks
+      --showCompleted, -c Show completed tasks
 
     ${chalk.underline('Examples')}
       List all tasks from all lists
@@ -32,9 +32,9 @@ const executeCommand: CommandExecutor = async () => {
         type: 'string',
         alias: 'l',
       },
-      showHidden: {
+      showCompleted: {
         type: 'boolean',
-        alias: 'h',
+        alias: 'c',
       }
     },
   });
@@ -66,8 +66,8 @@ const printTaskListItems = async (cli: meow.Result, client: tasks_v1.Tasks, list
 
   const { data: tasks } = await client.tasks.list({
     tasklist: list.id,
-    showCompleted: cli.flags.showHidden,
-    showHidden: cli.flags.showHidden,
+    showCompleted: cli.flags.showCompleted,
+    showHidden: cli.flags.showCompleted,
   });
 
   if (!tasks.items) { return; }
