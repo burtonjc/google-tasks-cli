@@ -37,7 +37,6 @@ const executeCommand: CommandExecutor = async () => {
     },
   });
 
-  console.log(cli.input);
   const listName = cli.flags.list;
   const title = cli.input[1];
 
@@ -65,7 +64,7 @@ const addTask = async (title: string, listName: string) => {
     requestBody: { title, }
   });
 
-  console.log(task);
+  console.log(chalk.green('\nSuccessfully created task!'));
 }
 
 export default executeCommand;
