@@ -7,6 +7,11 @@ import { CommandExecutor } from '../../helpers/command-helper';
 import { getTasksV1Client } from '../../helpers/google-helper';
 import { tasks_v1 } from 'googleapis';
 
+interface ListFlags {
+  list?: string;
+  showCompleted?: boolean;
+}
+
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
@@ -39,22 +44,35 @@ const executeCommand: CommandExecutor = async () => {
     },
   });
 
-  const TasksV1 = getTasksV1Client();
-
-  const { data: lists } = await TasksV1.tasklists.list();
-  if (cli.flags.list) {
-    const list = lists.items.find(l =>
-      l.title.toLowerCase() === cli.flags.list.toLowerCase()
-    );
-    printTaskListItems(cli, TasksV1, list);
-  } else {
-    for (const list of lists.items) {
-      printTaskListItems(cli, TasksV1, list);
-    }
-  }
+  await listTasks(cli.flags);
 }
 
-const printTaskListItems = async (cli: meow.Result, client: tasks_v1.Tasks, list: tasks_v1.Schema$TaskList) => {
+const listTasks = async (flags: ListFlags) => {
+  const TasksV1 = getTasksV1Client();
+  const { data: lists } = await TasksV1.tasklists.list();
+
+  if (flags.list) {
+    const list = lists.items.find(l =>
+      l.title.toLowerCase() === flags.list.toLowerCase()
+    );
+    printTaskListItems(flags, TasksV1, list);
+  } else {
+    for (const list of lists.items) {
+      printTaskListItems(flags, TasksV1, list);
+    }
+  }
+
+}
+
+const printTaskListItems = async (flags: ListFlags, client: tasks_v1.Tasks, list: tasks_v1.Schema$TaskList) => {
+  const { data: tasks } = await client.tasks.list({
+    tasklist: list.id,
+    showCompleted: flags.showCompleted,
+    showHidden: flags.showCompleted,
+  });
+
+  if (!tasks.items) { return; }
+
   const table = new Table({
     colWidths: [3, 5, 50, 12],
     chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
@@ -63,14 +81,6 @@ const printTaskListItems = async (cli: meow.Result, client: tasks_v1.Tasks, list
     , 'right': '' , 'right-mid': '' , 'middle': ' ' },
     style: { 'padding-left': 0, 'padding-right': 0 }
   });
-
-  const { data: tasks } = await client.tasks.list({
-    tasklist: list.id,
-    showCompleted: cli.flags.showCompleted,
-    showHidden: cli.flags.showCompleted,
-  });
-
-  if (!tasks.items) { return; }
 
   for (const task of tasks.items) {
     table.push([
