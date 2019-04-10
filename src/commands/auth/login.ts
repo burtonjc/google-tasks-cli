@@ -2,9 +2,10 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../helpers/command-helper';
+import { authenticate } from '../../helpers/google-helper';
 
-const executeCommand: CommandExecutor = () => {
-  const cli = meow(`
+const executeCommand: CommandExecutor = async () => {
+  meow(`
     ${chalk.underline(`Usage`)}
       $ tasks auth login
 
@@ -14,7 +15,7 @@ const executeCommand: CommandExecutor = () => {
     description: 'Authorize a Google account',
   });
 
-  return Promise.resolve();
+  await authenticate();
 }
 
 export default executeCommand;

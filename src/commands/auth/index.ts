@@ -15,14 +15,10 @@ const executeCommand: CommandExecutor = () => {
       --help, -h    Show help text
 
     ${chalk.underline('Commands')}
-      list          List authorized Google accounts
       login         Authorize access your Google Tasks
       revoke        Revoke access to a Google account
 
     ${chalk.underline('Examples')}
-      To list authorized Google accounts
-      $ tasks auth list
-
       To authorize tasks to access a Google account
       $ tasks auth login
 

@@ -24,6 +24,7 @@ export const executeSubCommand = async (cli: Result, dir: string) => {
     await executor();
   } catch (error) {
     if (error.code === 'MODULE_NOT_FOUND') {
+      console.log(inspect(error));
       console.log(`
         \r  ${chalk.red(`Error: unknown command "${chalk.bold(command)}"`)}
         \r  ${chalk.grey(`Run 'tasks --help' for usage`)}.
