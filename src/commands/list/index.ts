@@ -33,6 +33,10 @@ const executeCommand: CommandExecutor = async () => {
   `, {
     description: 'Show all tasks',
     flags: {
+      help: {
+        type: 'boolean',
+        alias: 'h',
+      },
       list: {
         type: 'string',
         alias: 'l',
@@ -97,4 +101,3 @@ const printTaskListItems = async (flags: ListFlags, client: tasks_v1.Tasks, list
 }
 
 export default executeCommand;
-

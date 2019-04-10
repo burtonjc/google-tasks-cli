@@ -13,6 +13,12 @@ const executeCommand: CommandExecutor = async () => {
       --help, -h    Show help text
   `, {
     description: 'Authorize a Google account',
+    flags: {
+      help: {
+        type: 'boolean',
+        alias: 'h',
+      },
+    },
   });
 
   await authenticate();

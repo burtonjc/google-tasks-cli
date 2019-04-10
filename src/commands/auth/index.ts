@@ -24,8 +24,8 @@ const executeCommand: CommandExecutor = () => {
 
       To revoke access to a Google account
       $ tasks auth revoke 'example@gmail.com'
-  `, {
-    autoHelp: false,
+  `, {autoHelp
+    : false,
     description: 'Manage Google account authorizations',
   });
 
