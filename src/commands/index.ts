@@ -19,6 +19,7 @@ const executeCommand: CommandExecutor = async () => {
       auth          Manage authenticated Google accounts
       check         Mark a task as complete
       delete        Delete a task
+      restore       Restore a deleted task
       uncheck       Mark a task as not complete
   `, { autoHelp: false, });
 
