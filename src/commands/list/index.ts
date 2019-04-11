@@ -64,7 +64,7 @@ const listTasks = async (flags: ListFlags) => {
       tasklist: list.id,
       showCompleted: true,
       showDeleted: flags.showAll,
-      showHidden: flags.showAll,
+      showHidden: true,
     });
 
     await printTaskListItems(list, tasks);

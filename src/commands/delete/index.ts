@@ -58,7 +58,11 @@ const deleteTask = async (listName: string, id: string) => {
   const list = lists.items.find(l =>
     l.title.toLowerCase() === listName.toLowerCase()
   );
-  const {data: { items: tasks }} = await TasksV1.tasks.list({ tasklist: list.id });
+  const {data: { items: tasks }} = await TasksV1.tasks.list({
+    tasklist: list.id,
+    showCompleted: true,
+    showHidden: true,
+  });
   const taskIndex = tasks.findIndex(t => t.id.endsWith(id));
 
   const { data: task } = await TasksV1.tasks.patch({
