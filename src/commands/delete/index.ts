@@ -5,27 +5,23 @@ import { CommandExecutor } from '../../helpers/command-helper';
 import { getTasksV1Client } from '../../helpers/google-helper';
 import { printTaskListItems } from '../../helpers/tasks-helper';
 
-interface AddTaskFlags {
-  list: string;
-}
-
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks add [options] '<task name>'
+      $ tasks delete [options] <task id>
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
 
     ${chalk.underline('Options')}
-      --list, -l  [required] Which list to add the task to
+      --list, -l    [required] Which list the referenced task is in
 
     ${chalk.underline('Examples')}
-      Add a task called 'Build a chicken coop' to the 'House Projects' list
-      $ tasks add --list 'House Projects' 'Build a chicken coop'
+      Hide the task with id 'abc123' from the 'Home Projects' list
+      $ tasks delete --list 'Home Projects' abc123
   `, {
     autoHelp: true,
-    description: 'Add a Google Task',
+    description: 'Delete a Google Task',
     flags: {
       help: {
         type: 'boolean',
@@ -39,36 +35,40 @@ const executeCommand: CommandExecutor = async () => {
   });
 
   const listName = cli.flags.list;
-  const title = cli.input[1];
+  const id = cli.input[1];
 
   if (!listName) {
-    console.log(chalk.red('Must specify a list to add the task to. See `tasks add --help`.'));
+    console.log(chalk.red('Must specify which list the specified task is in. See `tasks delete --help`.'));
     return;
   }
-  if (!title) {
-    console.log(chalk.red('Must specify a title for the task. See `tasks add --help`.'));
+  if (!id) {
+    console.log(chalk.red('Must specify a id for the task. See `tasks delete --help`.'));
     return;
   }
 
-  const { list, tasks } = await addTask(title, listName);
+  const { list, tasks, } = await deleteTask(listName, id);
 
   printTaskListItems(list, tasks);
   console.log();
 }
 
-const addTask = async (title: string, listName: string) => {
+const deleteTask = async (listName: string, id: string) => {
   const TasksV1 = getTasksV1Client();
   const { data: lists } = await TasksV1.tasklists.list();
   const list = lists.items.find(l =>
     l.title.toLowerCase() === listName.toLowerCase()
   );
+  const {data: { items: tasks }} = await TasksV1.tasks.list({ tasklist: list.id });
+  const taskIndex = tasks.findIndex(t => t.id.endsWith(id));
 
-  await TasksV1.tasks.insert({
+  const { data: task } = await TasksV1.tasks.patch({
+    requestBody: {
+      deleted: true,
+    },
+    task: tasks[taskIndex].id,
     tasklist: list.id,
-    requestBody: { title, }
   });
-
-  const { data: { items: tasks }} = await TasksV1.tasks.list({ tasklist: list.id });
+  tasks.splice(taskIndex, 1);
 
   return { list, tasks };
 }

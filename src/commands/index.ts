@@ -17,8 +17,9 @@ const executeCommand: CommandExecutor = async () => {
     ${chalk.underline('Commands')}
       add           Add a task
       auth          Manage authenticated Google accounts
-      complete      Complete a task
+      check         Mark a task as complete
       delete        Delete a task
+      uncheck       Mark a task as not complete
   `, { autoHelp: false, });
 
   await executeSubCommand(cli, __dirname);

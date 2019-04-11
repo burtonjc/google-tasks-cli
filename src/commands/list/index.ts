@@ -1,15 +1,13 @@
 import chalk from 'chalk';
-import Table from 'cli-table';
 import meow from 'meow';
-import * as moment from 'moment';
 
 import { CommandExecutor } from '../../helpers/command-helper';
 import { getTasksV1Client } from '../../helpers/google-helper';
-import { tasks_v1 } from 'googleapis';
+import { printTaskListItems } from '../../helpers/tasks-helper';
 
 interface ListFlags {
   list?: string;
-  showCompleted?: boolean;
+  showAll?: boolean;
 }
 
 const executeCommand: CommandExecutor = async () => {
@@ -18,11 +16,11 @@ const executeCommand: CommandExecutor = async () => {
       $ tasks list [options]
 
     ${chalk.underline('Global Options')}
-      --help, -h    Show help text
+      --help, -h      Show help text
 
     ${chalk.underline('Options')}
-      --list, -l  Which list to show the task from
-      --showCompleted, -c Show completed tasks
+      --list, -l      Which list to show the task from
+      --showAll, -a   Show hidden tasks as well
 
     ${chalk.underline('Examples')}
       List all tasks from all lists
@@ -34,17 +32,17 @@ const executeCommand: CommandExecutor = async () => {
     description: 'Show all tasks',
     flags: {
       help: {
-        type: 'boolean',
         alias: 'h',
+        type: 'boolean',
       },
       list: {
-        type: 'string',
         alias: 'l',
+        type: 'string',
       },
-      showCompleted: {
+      showAll: {
+        alias: 'a',
         type: 'boolean',
-        alias: 'c',
-      }
+      },
     },
   });
 
@@ -53,51 +51,26 @@ const executeCommand: CommandExecutor = async () => {
 
 const listTasks = async (flags: ListFlags) => {
   const TasksV1 = getTasksV1Client();
-  const { data: lists } = await TasksV1.tasklists.list();
+  let { data: { items: lists }} = await TasksV1.tasklists.list();
 
   if (flags.list) {
-    const list = lists.items.find(l =>
+    lists = [lists.find(l =>
       l.title.toLowerCase() === flags.list.toLowerCase()
-    );
-    printTaskListItems(flags, TasksV1, list);
-  } else {
-    for (const list of lists.items) {
-      printTaskListItems(flags, TasksV1, list);
-    }
+    )];
   }
 
-}
+  for (const list of lists) {
+    const { data: { items: tasks }} = await TasksV1.tasks.list({
+      tasklist: list.id,
+      showCompleted: true,
+      showDeleted: flags.showAll,
+      showHidden: flags.showAll,
+    });
 
-const printTaskListItems = async (flags: ListFlags, client: tasks_v1.Tasks, list: tasks_v1.Schema$TaskList) => {
-  const { data: tasks } = await client.tasks.list({
-    tasklist: list.id,
-    showCompleted: flags.showCompleted,
-    showHidden: flags.showCompleted,
-  });
-
-  if (!tasks.items) { return; }
-
-  const table = new Table({
-    colWidths: [3, 5, 50, 12],
-    chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
-    , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
-    , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
-    , 'right': '' , 'right-mid': '' , 'middle': ' ' },
-    style: { 'padding-left': 0, 'padding-right': 0 }
-  });
-
-  for (const task of tasks.items) {
-    table.push([
-      task.status === 'completed' ? `[${chalk.green('x')}]` : '[ ]',
-      chalk.grey(task.id.substr(-5)),
-      task.title,
-      moment.utc(task.updated).fromNow()
-    ])
+    await printTaskListItems(list, tasks);
   }
 
   console.log();
-  console.log(chalk.blue.underline(list.title));
-  console.log(table.toString());
 }
 
 export default executeCommand;
