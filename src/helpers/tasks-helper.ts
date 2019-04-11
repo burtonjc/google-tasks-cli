@@ -7,7 +7,7 @@ export const printTaskListItems = async (list: tasks_v1.Schema$TaskList, tasks: 
   console.log();
   console.log(chalk.blue.underline(list.title));
 
-  if (!tasks) {
+  if (!tasks || tasks.length === 0) {
     console.log(chalk.grey('All finished here!'));
     return;
   }
