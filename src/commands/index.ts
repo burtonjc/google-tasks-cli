@@ -20,6 +20,11 @@ const executeCommand: CommandExecutor = async () => {
       tasks         Manage tasks
   `, { autoHelp: false, });
 
+  if ( cli.input.length === 0 ) {
+    console.log(cli.help);
+    return;
+  }
+
   await executeSubCommand(cli, __dirname);
 }
 
