@@ -1,9 +1,9 @@
-# google-tasks-cli
+# Google Tasks CLI
 A minimal CLI wrapper for Google Tasks.
 
 ## Usage
 ```
-% gtasks --help
+> gtasks --help
 
   A CLI wrapper for Google Tasks
 
