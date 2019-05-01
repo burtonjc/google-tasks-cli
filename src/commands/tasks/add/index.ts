@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import meow from 'meow';
 
-import { CommandExecutor } from '../../helpers/command-helper';
-import { getTasksV1Client } from '../../helpers/google-helper';
-import { printTaskListItems } from '../../helpers/tasks-helper';
+import { CommandExecutor } from '../../../helpers/command-helper';
+import { getTasksV1Client } from '../../../helpers/google-helper';
+import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 interface AddTaskFlags {
   list: string;
@@ -12,7 +12,7 @@ interface AddTaskFlags {
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks add [options] '<task name>'
+      $ gtask tasks add [options] '<task name>'
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -22,7 +22,7 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Examples')}
       Add a task called 'Build a chicken coop' to the 'House Projects' list
-      $ tasks add --list 'House Projects' 'Build a chicken coop'
+      $ gtask tasks add --list 'House Projects' 'Build a chicken coop'
   `, {
     autoHelp: true,
     description: 'Add a Google Task',
@@ -39,7 +39,7 @@ const executeCommand: CommandExecutor = async () => {
   });
 
   const listName = cli.flags.list;
-  const title = cli.input[1];
+  const title = cli.input[2];
 
   if (!listName) {
     console.log(chalk.red('Must specify a list to add the task to. See `tasks add --help`.'));

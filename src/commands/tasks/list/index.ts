@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import meow from 'meow';
 
-import { CommandExecutor } from '../../helpers/command-helper';
-import { getTasksV1Client } from '../../helpers/google-helper';
-import { printTaskListItems } from '../../helpers/tasks-helper';
+import { CommandExecutor } from '../../../helpers/command-helper';
+import { getTasksV1Client } from '../../../helpers/google-helper';
+import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 interface ListFlags {
   list?: string;
@@ -13,7 +13,7 @@ interface ListFlags {
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks list [options]
+      $ gtask tasks list [options]
 
     ${chalk.underline('Global Options')}
       --help, -h      Show help text
@@ -24,10 +24,10 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Examples')}
       List all tasks from all lists
-      $ tasks list
+      $ gtask tasks list
 
       List all tasks from the 'House Projects' list
-      $ tasks list --list 'House Projects'
+      $ gtask tasks list --list 'House Projects'
   `, {
     description: 'Show all tasks',
     flags: {

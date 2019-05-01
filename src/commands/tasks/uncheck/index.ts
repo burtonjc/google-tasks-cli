@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import meow from 'meow';
 
-import { CommandExecutor } from '../../helpers/command-helper';
-import { getTasksV1Client } from '../../helpers/google-helper';
-import { printTaskListItems } from '../../helpers/tasks-helper';
+import { CommandExecutor } from '../../../helpers/command-helper';
+import { getTasksV1Client } from '../../../helpers/google-helper';
+import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks delete [options] <task id>
+      $ gtask tasks uncheck [options] <task id>
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -17,11 +17,11 @@ const executeCommand: CommandExecutor = async () => {
       --list, -l    [required] Which list the referenced task is in
 
     ${chalk.underline('Examples')}
-      Hide the task with id 'abc123' from the 'Home Projects' list
-      $ tasks delete --list 'Home Projects' abc123
+      Mark the task with id 'abc123' from the 'Home Projects' list incomplete
+      $ gtask tasks uncheck --list 'Home Projects' abc123
   `, {
     autoHelp: true,
-    description: 'Delete a Google Task',
+    description: 'Mark a Google Task incomplete',
     flags: {
       help: {
         type: 'boolean',
@@ -35,44 +35,46 @@ const executeCommand: CommandExecutor = async () => {
   });
 
   const listName = cli.flags.list;
-  const id = cli.input[1];
+  const id = cli.input[2];
 
   if (!listName) {
-    console.log(chalk.red('Must specify which list the specified task is in. See `tasks delete --help`.'));
+    console.log(chalk.red('Must specify which list the specified task is in. See `tasks uncheck --help`.'));
     return;
   }
   if (!id) {
-    console.log(chalk.red('Must specify a id for the task. See `tasks delete --help`.'));
+    console.log(chalk.red('Must specify a id for the task. See `tasks uncheck --help`.'));
     return;
   }
 
-  const { list, tasks, } = await deleteTask(listName, id);
+  const { list, tasks, } = await uncheckTask(listName, id);
 
   printTaskListItems(list, tasks);
   console.log();
 }
 
-const deleteTask = async (listName: string, id: string) => {
+const uncheckTask = async (listName: string, id: string) => {
   const TasksV1 = getTasksV1Client();
   const { data: lists } = await TasksV1.tasklists.list();
   const list = lists.items.find(l =>
     l.title.toLowerCase() === listName.toLowerCase()
   );
   const {data: { items: tasks }} = await TasksV1.tasks.list({
-    tasklist: list.id,
     showCompleted: true,
     showHidden: true,
+    tasklist: list.id,
   });
-  const taskIndex = tasks.findIndex(t => t.id.endsWith(id));
 
+  const taskIndex = tasks.findIndex(t => t.id.endsWith(id));
   const { data: task } = await TasksV1.tasks.patch({
     requestBody: {
-      deleted: true,
+      completed: null,
+      hidden: false,
+      status: 'needsAction',
     },
     task: tasks[taskIndex].id,
     tasklist: list.id,
   });
-  tasks.splice(taskIndex, 1);
+  tasks.splice(taskIndex, 1, task);
 
   return { list, tasks };
 }

@@ -5,7 +5,7 @@ import * as moment from 'moment';
 
 export const printTaskListItems = async (list: tasks_v1.Schema$TaskList, tasks: tasks_v1.Schema$Task[]) => {
   console.log();
-  console.log(chalk.blue.underline(list.title));
+  console.log(chalk.grey(list.id.substr(-4)), chalk.blue.underline(list.title));
 
   if (!tasks || tasks.length === 0) {
     console.log(chalk.grey('All finished here!'));

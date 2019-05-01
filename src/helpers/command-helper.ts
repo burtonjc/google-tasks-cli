@@ -9,13 +9,7 @@ export interface CommandExecutor {
 
 let level = 0;
 export const executeSubCommand = async (cli: Result, dir: string) => {
-  const command = cli.input[level++];
-
-  if ( !command ) {
-    debug('No sub command specified ... displaying help')
-    console.log(cli.help);
-    return;
-  }
+  const command = cli.input[level++] || 'list';
 
   try {
     const commandPath = resolve(dir, command);

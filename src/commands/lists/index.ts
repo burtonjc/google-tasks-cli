@@ -4,20 +4,20 @@ import meow from 'meow';
 import {
   CommandExecutor,
   executeSubCommand,
-} from '../helpers/command-helper';
+} from '../../helpers/command-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask <command> [options] ...
+      $ gtask lists <command> [options] ...
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
 
     ${chalk.underline('Commands')}
-      auth          Manage authenticated Google accounts
-      lists         Manage task lists
-      tasks         Manage tasks
+      add           Add a list
+      delete        Delete a list
+      list          Show all lists
   `, { autoHelp: false, });
 
   await executeSubCommand(cli, __dirname);
