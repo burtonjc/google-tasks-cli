@@ -7,7 +7,7 @@ import { authenticate } from '../../helpers/google-helper';
 const executeCommand: CommandExecutor = async () => {
   meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks auth login
+      $ gtask auth login
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text

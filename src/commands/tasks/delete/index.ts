@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import meow from 'meow';
 
-import { CommandExecutor } from '../../helpers/command-helper';
-import { getTasksV1Client } from '../../helpers/google-helper';
-import { printTaskListItems } from '../../helpers/tasks-helper';
+import { CommandExecutor } from '../../../helpers/command-helper';
+import { getTasksV1Client } from '../../../helpers/google-helper';
+import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks restore [options] <task id>
+      $ gtask tasks delete [options] <task id>
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -17,11 +17,11 @@ const executeCommand: CommandExecutor = async () => {
       --list, -l    [required] Which list the referenced task is in
 
     ${chalk.underline('Examples')}
-      Restore the task with id 'abc123' in the 'Home Projects' list
-      $ tasks restore --list 'Home Projects' abc123
+      Hide the task with id 'abc123' from the 'Home Projects' list
+      $ gtask tasks delete --list 'Home Projects' abc123
   `, {
     autoHelp: true,
-    description: 'Restore a deleted Google Task',
+    description: 'Delete a Google Task',
     flags: {
       help: {
         type: 'boolean',
@@ -35,47 +35,44 @@ const executeCommand: CommandExecutor = async () => {
   });
 
   const listName = cli.flags.list;
-  const id = cli.input[1];
+  const id = cli.input[2];
 
   if (!listName) {
-    console.log(chalk.red('Must specify which list the specified task is in. See `tasks restore --help`.'));
+    console.log(chalk.red('Must specify which list the specified task is in. See `tasks delete --help`.'));
     return;
   }
   if (!id) {
-    console.log(chalk.red('Must specify a id for the task. See `tasks restore --help`.'));
+    console.log(chalk.red('Must specify a id for the task. See `tasks delete --help`.'));
     return;
   }
 
-  const { list, tasks } = await restoreTask(listName, id);
+  const { list, tasks, } = await deleteTask(listName, id);
 
   printTaskListItems(list, tasks);
   console.log();
 }
 
-const restoreTask = async (listName: string, id: string) => {
+const deleteTask = async (listName: string, id: string) => {
   const TasksV1 = getTasksV1Client();
   const { data: lists } = await TasksV1.tasklists.list();
   const list = lists.items.find(l =>
     l.title.toLowerCase() === listName.toLowerCase()
   );
-  let {data: { items: tasks }} = await TasksV1.tasks.list({
-    showCompleted: true,
-    showDeleted: true,
-    showHidden: true,
+  const {data: { items: tasks }} = await TasksV1.tasks.list({
     tasklist: list.id,
+    showCompleted: true,
+    showHidden: true,
   });
-
   const taskIndex = tasks.findIndex(t => t.id.endsWith(id));
 
   const { data: task } = await TasksV1.tasks.patch({
     requestBody: {
-      deleted: false,
+      deleted: true,
     },
     task: tasks[taskIndex].id,
     tasklist: list.id,
   });
-  tasks.splice(taskIndex, 1, task);
-  tasks = tasks.filter(t => !(t.deleted));
+  tasks.splice(taskIndex, 1);
 
   return { list, tasks };
 }

@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import meow from 'meow';
 
-import { CommandExecutor } from '../../helpers/command-helper';
-import { getTasksV1Client } from '../../helpers/google-helper';
-import { printTaskListItems } from '../../helpers/tasks-helper';
+import { CommandExecutor } from '../../../helpers/command-helper';
+import { getTasksV1Client } from '../../../helpers/google-helper';
+import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ tasks check [options] <task id>
+      $ gtask tasks check [options] <task id>
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -18,7 +18,7 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Examples')}
       Mark the task with id 'abc123' from the 'Home Projects' list complete
-      $ tasks check --list 'Home Projects' abc123
+      $ gtask tasks check --list 'Home Projects' abc123
   `, {
     autoHelp: true,
     description: 'Mark a Google Task complete',
@@ -35,7 +35,7 @@ const executeCommand: CommandExecutor = async () => {
   });
 
   const listName = cli.flags.list;
-  const id = cli.input[1];
+  const id = cli.input[2];
 
   if (!listName) {
     console.log(chalk.red('Must specify which list the specified task is in. See `tasks check --help`.'));

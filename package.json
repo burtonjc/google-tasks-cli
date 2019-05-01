@@ -4,7 +4,7 @@
   "description": "A CLI wrapper for Google Tasks",
   "main": "lib/index.js",
   "bin": {
-    "tasks": "lib/index.js"
+    "gtasks": "lib/index.js"
   },
   "scripts": {
     "build": "tsc",
