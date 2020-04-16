@@ -2,20 +2,21 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../../helpers/command-helper';
+import { COMMAND_NAME } from '../../../helpers/constants';
 import { getTasksV1Client } from '../../../helpers/google-helper';
 import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask lists add [options] '<list name>'
+      $ ${COMMAND_NAME} lists add [options] '<list name>'
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
 
     ${chalk.underline('Examples')}
       Add a list called 'House Projects'
-      $ gtask lists add 'House Projects'
+      $ ${COMMAND_NAME} lists add 'House Projects'
   `, {
     autoHelp: true,
     description: 'Add a Google Task list',
@@ -30,7 +31,7 @@ const executeCommand: CommandExecutor = async () => {
   const title = cli.input[2];
 
   if (!title) {
-    console.log(chalk.red('Must specify a title for the list. See `gtask lists add --help`.'));
+    console.log(chalk.red(`Must specify a title for the list. See \`${COMMAND_NAME} lists add --help\`.`));
     return;
   }
 

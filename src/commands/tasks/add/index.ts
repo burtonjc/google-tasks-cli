@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../../helpers/command-helper';
+import { COMMAND_NAME } from '../../../helpers/constants';
 import { getTasksV1Client } from '../../../helpers/google-helper';
 import { printTaskListItems } from '../../../helpers/tasks-helper';
 
@@ -12,7 +13,7 @@ interface AddTaskFlags {
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask tasks add [options] '<task name>'
+      $ ${COMMAND_NAME} tasks add [options] '<task name>'
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -22,7 +23,7 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Examples')}
       Add a task called 'Build a chicken coop' to the 'House Projects' list
-      $ gtask tasks add --list 'House Projects' 'Build a chicken coop'
+      $ ${COMMAND_NAME} tasks add --list 'House Projects' 'Build a chicken coop'
   `, {
     autoHelp: true,
     description: 'Add a Google Task',

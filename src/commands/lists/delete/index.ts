@@ -2,20 +2,20 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../../helpers/command-helper';
+import { COMMAND_NAME } from '../../../helpers/constants';
 import { getTasksV1Client } from '../../../helpers/google-helper';
-import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask lists delete [options] '<list id>'
+      $ ${COMMAND_NAME} lists delete [options] '<list id>'
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
 
     ${chalk.underline('Examples')}
       Delete a list with id ABcd
-      $ gtask lists delete ABcd
+      $ ${COMMAND_NAME} lists delete ABcd
   `, {
     autoHelp: true,
     description: 'Delete a Google Task list',
@@ -30,7 +30,7 @@ const executeCommand: CommandExecutor = async () => {
   const id = cli.input[2];
 
   if (!id) {
-    console.log(chalk.red('Must specify a id for the list. See `gtask lists delete --help`.'));
+    console.log(chalk.red(`Must specify a id for the list. See \`${COMMAND_NAME} lists delete --help\`.`));
     return;
   }
 

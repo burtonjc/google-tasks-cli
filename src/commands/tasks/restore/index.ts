@@ -2,13 +2,14 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../../helpers/command-helper';
+import { COMMAND_NAME } from '../../../helpers/constants';
 import { getTasksV1Client } from '../../../helpers/google-helper';
 import { printTaskListItems } from '../../../helpers/tasks-helper';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask tasks restore [options] <task id>
+      $ ${COMMAND_NAME} tasks restore [options] <task id>
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -18,7 +19,7 @@ const executeCommand: CommandExecutor = async () => {
 
     ${chalk.underline('Examples')}
       Restore the task with id 'abc123' in the 'Home Projects' list
-      $ gtask tasks restore --list 'Home Projects' abc123
+      $ ${COMMAND_NAME} tasks restore --list 'Home Projects' abc123
   `, {
     autoHelp: true,
     description: 'Restore a deleted Google Task',

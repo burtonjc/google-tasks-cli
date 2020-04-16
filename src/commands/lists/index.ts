@@ -5,11 +5,12 @@ import {
   CommandExecutor,
   executeSubCommand,
 } from '../../helpers/command-helper';
+import { COMMAND_NAME } from '../../helpers/constants';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask lists <command> [options] ...
+      $ ${COMMAND_NAME} lists <command> [options] ...
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -20,7 +21,7 @@ const executeCommand: CommandExecutor = async () => {
       list          Show all lists
   `, { autoHelp: false, });
 
-  await executeSubCommand(cli, __dirname);
+  await executeSubCommand(cli, __dirname, 'list');
 }
 
 export default executeCommand;

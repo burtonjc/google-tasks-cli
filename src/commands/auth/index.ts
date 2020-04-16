@@ -5,11 +5,12 @@ import {
   CommandExecutor,
   executeSubCommand,
 } from '../../helpers/command-helper';
+import { COMMAND_NAME } from '../../helpers/constants';
 
 const executeCommand: CommandExecutor = () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask auth <command> [options]
+      $ ${COMMAND_NAME} auth <command> [options]
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
@@ -20,10 +21,10 @@ const executeCommand: CommandExecutor = () => {
 
     ${chalk.underline('Examples')}
       To authorize tasks to access a Google account
-      $ gtask auth login
+      $ ${COMMAND_NAME} auth login
 
       To revoke access to a Google account
-      $ gtask auth revoke 'example@gmail.com'
+      $ ${COMMAND_NAME} auth revoke 'example@gmail.com'
   `, {autoHelp
     : false,
     description: 'Manage Google account authorizations',

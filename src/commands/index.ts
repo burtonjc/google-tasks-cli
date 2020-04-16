@@ -5,27 +5,28 @@ import {
   CommandExecutor,
   executeSubCommand,
 } from '../helpers/command-helper';
+import { COMMAND_NAME } from '../helpers/constants';
 
 const executeCommand: CommandExecutor = async () => {
   const cli = meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask <command> [options] ...
+      $ ${COMMAND_NAME} <command> [options] ...
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
 
     ${chalk.underline('Commands')}
-      auth          Manage authenticated Google accounts
-      lists         Manage task lists
-      tasks         Manage tasks
+      auth          Manage authenticated Google account
+      lists         Manage Google Task lists
+      tasks         Manage Google Task tasks
   `, { autoHelp: false, });
 
-  if ( cli.input.length === 0 ) {
-    console.log(cli.help);
+  if (cli.input.length === 0 && cli.flags.help) {
+    cli.showHelp();
     return;
   }
 
-  await executeSubCommand(cli, __dirname);
+  await executeSubCommand(cli, __dirname, 'tasks');
 }
 
 export default executeCommand;

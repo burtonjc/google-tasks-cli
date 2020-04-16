@@ -2,12 +2,13 @@ import chalk from 'chalk';
 import meow from 'meow';
 
 import { CommandExecutor } from '../../helpers/command-helper';
+import { COMMAND_NAME } from '../../helpers/constants';
 import { authenticate } from '../../helpers/google-helper';
 
 const executeCommand: CommandExecutor = async () => {
   meow(`
     ${chalk.underline(`Usage`)}
-      $ gtask auth login
+      $ ${COMMAND_NAME} auth login
 
     ${chalk.underline('Global Options')}
       --help, -h    Show help text
