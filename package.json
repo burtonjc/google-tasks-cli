@@ -44,7 +44,7 @@
     "configstore": "^4.0.0",
     "googleapis": "^39.2.0",
     "meow": "^5.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "opn": "^6.0.0",
     "server-destroy": "^1.0.1",
     "source-map-support": "^0.5.12"
