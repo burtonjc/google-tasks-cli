@@ -27,3 +27,15 @@ Due to no good way to store Google OAuth client credentials in a cli package, I 
 2. `npm install` - install the dependencies
 3. `npm run build` - build the package
 4. `npm link` - create a global `gtasks` command
+
+## Creating custom Google OAuth client credentials (optional)
+If you wish to set up your own credentials, follow these steps:
+
+1. Go to [Console Cloud](https://console.cloud.google.com/).
+2. Navigate to `APIs & Services` > `Enabled APIs & services` and enable the Google Tasks API.
+3. Configure your `OAuth consent screen` adding scopes related to Google Tasks API.
+4. Select `Create Credentials` under `Credentials`.
+5. Create a new `OAuth client ID`.
+6. Set the application type to `Desktop`.
+7. Download the JSON file and replace the `.client.config.json` in the root folder with it.
+8. Add `http:/localhost:8085/oauth2callback` as an item under the `redirect_uris` key in the downloaded JSON file.

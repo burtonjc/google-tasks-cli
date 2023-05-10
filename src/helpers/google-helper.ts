@@ -75,6 +75,8 @@ export const authenticate = async () => {
         reject(e);
       }
     }).listen(AUTH_CALLBACK_PORT, () => {
+        // output a message to the console with the authorize url
+        console.log(`Please visit ${authorizeUrl} to authorize this application`);
         // open the browser to the authorize url to start the workflow
         opn(authorizeUrl, { wait: false }).then((cp: any) => cp.unref());
       });
