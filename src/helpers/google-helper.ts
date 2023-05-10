@@ -36,7 +36,7 @@ export const getTasksV1Client = () => {
   const tokensJSON = conf.get('tokens');
 
   if (!tokensJSON) {
-    console.log(chalk.red('Must login to a Google account using `tasks auth login`.'));
+    console.log(chalk.red('Must login to a Google account using `gt auth login`.'));
     return;
   }
 
