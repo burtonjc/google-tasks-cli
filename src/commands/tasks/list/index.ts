@@ -4,7 +4,10 @@ import meow from "meow";
 import { CommandExecutor } from "../../../helpers/command-helper";
 import { COMMAND_NAME } from "../../../helpers/constants";
 import { getTasksV1Client } from "../../../helpers/google-helper";
-import { printTaskListItems } from "../../../helpers/tasks-helper";
+import {
+  determineTargetList,
+  printTaskListItems,
+} from "../../../helpers/tasks-helper";
 
 interface ListFlags {
   list?: string;
@@ -60,9 +63,7 @@ const listTasks = async (flags: ListFlags) => {
   } = await TasksV1.tasklists.list();
 
   if (flags.list) {
-    lists = [
-      lists.find((l) => l.title.toLowerCase() === flags.list.toLowerCase()),
-    ];
+    lists = [determineTargetList(flags.list, lists)];
   }
 
   const taskLists = await Promise.all(

@@ -76,7 +76,6 @@ const deleteTask = async (listIndicator: string, id: string) => {
   } = await TasksV1.tasks.list({
     tasklist: list.id,
     showCompleted: true,
-    showHidden: true,
   });
   const taskIndex = tasks.findIndex((t) => t.id.endsWith(id));
 

@@ -76,7 +76,6 @@ const checkTask = async (listIndicator: string, id: string) => {
     data: { items: tasks },
   } = await TasksV1.tasks.list({
     showCompleted: true,
-    showHidden: true,
     tasklist: list.id,
   });
 
